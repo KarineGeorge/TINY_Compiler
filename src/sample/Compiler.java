@@ -44,9 +44,9 @@ public class Compiler extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         tinyCompilerLabel = new Label("TINY Compiler");
-        selectCodeFileLabel = new Label(" Select file *.TINY");
+        selectCodeFileLabel = new Label("Select *.TINY file");
         selectButton = new Button("Browse");
-        tinyCodeLabel = new Label(" Enter TINY code");
+        tinyCodeLabel = new Label("Enter TINY code");
         codeTextArea = new TextArea();
         runButton = new Button("run");
         fileChooser = new FileChooser();
@@ -95,6 +95,11 @@ public class Compiler extends Application {
             }else if(!codeArea.isBlank()){
                 codeText = codeArea;
                 //System.out.println(codeText);
+            }else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("Please input your code");
+                alert.showAndWait();
             }
 
             if(codeText != null){
