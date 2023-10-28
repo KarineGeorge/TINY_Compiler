@@ -10,7 +10,7 @@ public class Scanner {
     File tokenFile = null;
 
     public Scanner(String tinyCode) {
-        this.tinyCode = tinyCode.replaceAll("\\s","");
+        this.tinyCode = tinyCode;
         this.index = 0;
     }
 
@@ -21,7 +21,7 @@ public class Scanner {
             return tinyCode.charAt(index++);
         }
         else{
-            return '\r';
+            return '\0';
         }
 
 
