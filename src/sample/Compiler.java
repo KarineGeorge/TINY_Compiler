@@ -13,11 +13,10 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Compiler extends Application {
     private Label tinyCompilerLabel;
@@ -33,8 +32,10 @@ public class Compiler extends Application {
     private HBox hbox;
     private VBox vBox;
 
-    String xmlText = " ";
-    static String xmlFile = "";
+    private FileChooser fileChooser;
+    File selectedFile = null;
+    String codeText = " ";
+    static String codeFile = "";
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -45,6 +46,7 @@ public class Compiler extends Application {
         tinyCodeLabel = new Label(" Enter TINY code");
         codeTextArea = new TextArea();
         runButton = new Button("run");
+        fileChooser = new FileChooser();
 
 
 
@@ -71,10 +73,24 @@ public class Compiler extends Application {
         vBox.setStyle("-fx-padding: 16;");
 
 
-        //selectButton.setOnAction(new selectFileHandler());
+        selectButton.setOnAction(action -> {
+            selectedFile = fileChooser.showOpenDialog(primaryStage);
+        });
         runButton.setOnAction(action -> {
-            xmlText = codeTextArea.getText();
-            xmlFile = String.valueOf(xmlText);
+            codeText = codeTextArea.getText();
+
+            if(selectedFile != null) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(selectedFile));
+                } catch (FileNotFoundException e1) {
+                    throw new RuntimeException(e1);
+                }
+
+
+            }else if(codeText != null){
+                System.out.println(codeText);
+            }
         });
 
         Scene scene = new Scene(vBox,700, 500);
@@ -82,7 +98,6 @@ public class Compiler extends Application {
         primaryStage.setTitle("TINY Compiler");
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
