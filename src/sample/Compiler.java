@@ -54,7 +54,7 @@ public class Compiler extends Application {
         selectButton.setPrefHeight(20);
         selectButton.setPrefWidth(90);
         tinyCodeLabel.setFont(Font.font("Arial" , FontWeight.NORMAL , FontPosture.ITALIC, 20));
-        codeTextArea.setPrefHeight(100);
+        codeTextArea.setPrefHeight(500);
         runButton.setPrefHeight(30);
         runButton.setPrefWidth(90);
 
@@ -71,15 +71,15 @@ public class Compiler extends Application {
         vBox.setStyle("-fx-padding: 16;");
 
 
-        selectButton.setOnAction(new selectFileHandler());
+        //selectButton.setOnAction(new selectFileHandler());
         runButton.setOnAction(action -> {
             xmlText = codeTextArea.getText();
             xmlFile = String.valueOf(xmlText);
         });
 
-        Scene scene = new Scene(vBox,550, 400);
+        Scene scene = new Scene(vBox,700, 500);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("GUI Editor");
+        primaryStage.setTitle("TINY Compiler");
         primaryStage.show();
     }
 
