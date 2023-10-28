@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Compiler extends Application {
@@ -34,8 +35,10 @@ public class Compiler extends Application {
 
     private FileChooser fileChooser;
     File selectedFile = null;
-    String codeText = " ";
-    static String codeFile = "";
+    String codeText = null;
+    String codeArea = null;
+
+    Scanner tinyScanner = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -77,20 +80,35 @@ public class Compiler extends Application {
             selectedFile = fileChooser.showOpenDialog(primaryStage);
         });
         runButton.setOnAction(action -> {
-            codeText = codeTextArea.getText();
+
+            codeArea = codeTextArea.getText();
 
             if(selectedFile != null) {
-                BufferedReader br;
+
                 try {
-                    br = new BufferedReader(new FileReader(selectedFile));
-                } catch (FileNotFoundException e1) {
-                    throw new RuntimeException(e1);
+                     codeText = Files.readString(Path.of(selectedFile.getPath()));
+                     //System.out.println(codeText);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }else if(!codeArea.isBlank()){
+                codeText = codeArea;
+                //System.out.println(codeText);
+            }
+
+            if(codeText != null){
+                tinyScanner = new Scanner(codeText);
+
+                char c;
+
+                while((c = tinyScanner.getNextChar()) != '\r'){
+                    System.out.println(c);
                 }
 
 
-            }else if(codeText != null){
-                System.out.println(codeText);
             }
+
         });
 
         Scene scene = new Scene(vBox,700, 500);
@@ -101,6 +119,9 @@ public class Compiler extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
+
+
     }
 }
 
