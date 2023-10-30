@@ -138,7 +138,7 @@ public class Scanner {
                         currentToken = TokenType.IDENTIFIER;
                     }
                     break;
-                case DONE:
+
                 default:
                     state = StateType.DONE;
                     currentToken = TokenType.ERROR;
@@ -147,14 +147,15 @@ public class Scanner {
             if (save && tokenStringIndex < MAXTOKENLEN) {
                 tokenString[tokenStringIndex++] =  c;
             }
-            if (state == StateType.DONE) {
-                tokenStr = new String(tokenString, 0, tokenStringIndex);
-                if (currentToken == TokenType.IDENTIFIER) {
-                    currentToken = reservedLookup(tokenStr);
-
-                }
-            }
         }
+
+            tokenStr = new String(tokenString, 0, tokenStringIndex);
+            if (currentToken == TokenType.IDENTIFIER) {
+                currentToken = reservedLookup(tokenStr);
+
+            }
+//            System.out.println(tokenStr+"\t"+currentToken.toString());
+
         return new TokenRecord(currentToken,tokenStr);
     }
     public TokenRecord[] getALlTokens() {
