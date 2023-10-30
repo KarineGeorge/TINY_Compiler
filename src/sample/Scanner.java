@@ -39,7 +39,26 @@ public class Scanner {
         index--;
     }
 
-
+    private TokenType reservedLookup(String tokenString) {
+        switch (tokenString) {
+            case "then":
+                return TokenType.THEN;
+            case "repeat":
+                return TokenType.REPEAT;
+            case "if":
+                return TokenType.IF;
+            case "end":
+                return TokenType.END;
+            case "until":
+                return TokenType.UNTIL;
+            case "read":
+                return TokenType.READ;
+            case "write":
+                return TokenType.WRITE;
+            default:
+                return TokenType.IDENTIFIER; // If not a reserved word, treat it as an identifier
+        }
+    }
 
 
     public TokenRecord getToken() {
@@ -138,7 +157,23 @@ public class Scanner {
         }
         return new TokenRecord(currentToken,tokenStr);
     }
+    public TokenRecord[] getALlTokens() {
+        TokenRecord tokenRecord;
+        int tokenIndex = 0;
+        TokenRecord[] tokenRecords = new TokenRecord[MAXTOKENRECORDLEN];
 
+        do {
+            tokenRecord = getToken();
+
+            if (tokenRecord.getTokenType() != TokenType.EOF) {
+                tokenRecords[tokenIndex] = tokenRecord;
+                tokenIndex++;
+
+            }
+        } while (tokenRecord.getTokenType() != TokenType.EOF);
+
+        return tokenRecords;
+    }
 
 
 //    public static void main(String[] args) {
