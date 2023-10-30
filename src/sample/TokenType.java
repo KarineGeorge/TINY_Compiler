@@ -8,6 +8,7 @@ public enum TokenType {
     REPEAT,
     UNTIL,
     IDENTIFIER,
+    ASSIGN,
     READ,
     WRITE,
     LESSTHAN ,
@@ -18,5 +19,9 @@ public enum TokenType {
     DIV ,
     OPENBRACKET ,
     CLOSEDBRACKET,
-    NUMBER
+    NUMBER,
+    ERROR,
+    EOF,
+    None
+
 }
