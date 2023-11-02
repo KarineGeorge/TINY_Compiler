@@ -124,19 +124,45 @@ public class Scanner {
                     break;
                 case INNUM:
                     if (!Character.isDigit(c)) {
+                        if (Character.isLetter(c)){
+                            while (Character.isLetter(c)||Character.isDigit(c)){
+                                if ( tokenStringIndex < MAXTOKENLEN) {
+                                    tokenString[tokenStringIndex++] =  c;
+                                }
+                               c= getNextChar();
+                            }
+                            ungetChar();
+                            save=false;
+                            state=StateType.DONE;
+                            currentToken=TokenType.ERROR;
+                        }
+                        else{
                         ungetChar();
                         save = false;
                         state = StateType.DONE;
                         currentToken = TokenType.NUMBER;
-                    }
+                    } }
                     break;
                 case INID:
                     if (!Character.isLetter(c)) {
-                        ungetChar();
-                        save = false;
-                        state = StateType.DONE;
-                        currentToken = TokenType.IDENTIFIER;
-                    }
+                        if (Character.isDigit(c)){
+                            while (Character.isLetter(c)||Character.isDigit(c)){
+                                if ( tokenStringIndex < MAXTOKENLEN) {
+                                    tokenString[tokenStringIndex++] =  c;
+                                }
+                                c= getNextChar();
+                            }
+                            ungetChar();
+                            save=false;
+                            state=StateType.DONE;
+                            currentToken=TokenType.ERROR;
+                        }
+                        else{
+                            ungetChar();
+                            save = false;
+                            state = StateType.DONE;
+                            currentToken = TokenType.IDENTIFIER;
+                        } }
                     break;
 
                 default:
@@ -154,7 +180,7 @@ public class Scanner {
                 currentToken = reservedLookup(tokenStr);
 
             }
-//            System.out.println(tokenStr+"\t"+currentToken.toString());
+            System.out.println(tokenStr+"\t"+currentToken.toString());
 
         return new TokenRecord(currentToken,tokenStr);
     }
