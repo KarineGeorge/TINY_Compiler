@@ -2,6 +2,9 @@ package sample;
 
 import java.io.File;
 import java.util.Arrays;
+import java.io.File;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Scanner {
 
@@ -180,41 +183,42 @@ public class Scanner {
                 currentToken = reservedLookup(tokenStr);
 
             }
-            System.out.println(tokenStr+"\t"+currentToken.toString());
 
         return new TokenRecord(currentToken,tokenStr);
     }
-    public TokenRecord[] getALlTokens() {
+    public Queue<TokenRecord> getAllTokens() {
         TokenRecord tokenRecord;
-        int tokenIndex = 0;
-        TokenRecord[] tokenRecords = new TokenRecord[MAXTOKENRECORDLEN];
+        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>();
 
         do {
             tokenRecord = getToken();
 
-            if (tokenRecord.getTokenType() != TokenType.EOF) {
-                tokenRecords[tokenIndex] = tokenRecord;
-                tokenIndex++;
-
+            if (tokenRecord.getTokenType() != TokenType.EOF ) {
+                tokenRecordsQueue.offer(tokenRecord);
             }
-        } while (tokenRecord.getTokenType() != TokenType.EOF);
+        } while (tokenRecord.getTokenType() != TokenType.EOF && tokenRecord.getTokenType() != TokenType.ERROR);
 
-        return tokenRecords;
+        return tokenRecordsQueue;
     }
+
 
 
 //    public static void main(String[] args) {
 //        // Replace this with your Tiny code input
-//        String tinyCode = "if 123X :=  2H 2 ; if then <= sj ";
+//        String tinyCode = "if Xyu1 :=  2H 2 ; if then <= sj ";
 //
-//
-//
-//        // Call getAllTokens to collect and display all tokens
+//        // Create a Scanner instance with the input string
 //        Scanner x = new Scanner(tinyCode);
 //
-//        TokenRecord[] tokens = new TokenRecord[MAXTOKENRECORDLEN];
-//        tokens = x.getALlTokens();
-//   }
+//        // Call getAllTokens to collect and display all tokens
+//        Queue<TokenRecord> tokenQueue = x.getAllTokens();
+//
+//        // Display the collected tokens
+//        while (!tokenQueue.isEmpty()) {
+//            TokenRecord token = tokenQueue.poll();
+//            System.out.println("Token Type: " + token.getTokenType() + ", Token Value: " + token.getTokenString());
+// }
+// }
 
 
 //    void save(){
