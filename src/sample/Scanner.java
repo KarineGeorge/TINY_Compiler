@@ -14,9 +14,7 @@ public class Scanner {
     private StateType state;
     private boolean save;
     private static final int MAXTOKENLEN = 100;
-    private static final int MAXTOKENRECORDLEN = 100;
     char[] tokenString = new char[MAXTOKENLEN];
-    TokenRecord[] tokenRecords = null;
 
     File tokenFile = null;
 
