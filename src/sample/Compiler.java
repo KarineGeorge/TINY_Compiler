@@ -22,13 +22,19 @@ import java.nio.file.Paths;
 public class Compiler extends Application {
     private Label tinyCompilerLabel;
     private Label selectCodeFileLabel;
+    private Label tinyCodeLabel;
+    private Label tokensLabel;
     private Button selectButton;
     private Button runButton;
-    private Label tinyCodeLabel;
+    private Button returnButton;
+
 
     private TextArea codeTextArea;
+    private TextArea tokensTextArea;
     private FlowPane flowPane;
     private FlowPane runflowPane;
+    private FlowPane returnFlowPane;
+
 
     private HBox hbox;
     private VBox vBox;
@@ -41,7 +47,11 @@ public class Compiler extends Application {
     Scanner tinyScanner = null;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage stage) throws Exception {
+        PrimaryScene(stage);
+    }
+
+    public void PrimaryScene(Stage stage){
 
         tinyCompilerLabel = new Label("TINY Compiler");
         selectCodeFileLabel = new Label("Select *.TINY file");
@@ -52,13 +62,12 @@ public class Compiler extends Application {
         fileChooser = new FileChooser();
 
 
-
         tinyCompilerLabel.setTextFill(Color.DARKBLUE);
-        tinyCompilerLabel.setFont(Font.font("Arial" , FontWeight.BOLD , FontPosture.ITALIC, 28));
-        selectCodeFileLabel.setFont(Font.font("Arial" , FontWeight.NORMAL , FontPosture.ITALIC,20));
+        tinyCompilerLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 28));
+        selectCodeFileLabel.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.ITALIC, 20));
         selectButton.setPrefHeight(20);
         selectButton.setPrefWidth(90);
-        tinyCodeLabel.setFont(Font.font("Arial" , FontWeight.NORMAL , FontPosture.ITALIC, 20));
+        tinyCodeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.ITALIC, 20));
         codeTextArea.setPrefHeight(500);
         runButton.setPrefHeight(30);
         runButton.setPrefWidth(90);
@@ -69,58 +78,85 @@ public class Compiler extends Application {
         runflowPane.setAlignment(Pos.CENTER);
 
 
-        hbox = new HBox(selectCodeFileLabel,selectButton);
+        hbox = new HBox(selectCodeFileLabel, selectButton);
         hbox.setSpacing(15);
-        vBox = new VBox(flowPane,hbox,tinyCodeLabel,codeTextArea,runflowPane);
+        vBox = new VBox(flowPane, hbox, tinyCodeLabel, codeTextArea, runflowPane);
         vBox.setSpacing(20);
         vBox.setStyle("-fx-padding: 16;");
 
 
         selectButton.setOnAction(action -> {
-            selectedFile = fileChooser.showOpenDialog(primaryStage);
+            selectedFile = fileChooser.showOpenDialog(stage);
         });
         runButton.setOnAction(action -> {
 
             codeArea = codeTextArea.getText();
 
-            if(selectedFile != null) {
+            if (selectedFile != null) {
 
                 try {
-                     codeText = Files.readString(Path.of(selectedFile.getPath()));
-                     //System.out.println(codeText);
+                    codeText = Files.readString(Path.of(selectedFile.getPath()));
+                    //System.out.println(codeText);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-            }else if(!codeArea.isBlank()){
+            } else if (!codeArea.isBlank()) {
                 codeText = codeArea;
                 //System.out.println(codeText);
-            }else{
+            } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
                 alert.setHeaderText("Please input your code");
                 alert.showAndWait();
             }
 
-            if(codeText != null){
+            if (codeText != null) {
                 tinyScanner = new Scanner(codeText);
+                String tokens = "";
+                OutputScene(stage,tokens);
 
-                char c;
-                while((c = tinyScanner.getNextChar()) != '\0'){
-                    System.out.println(c);
-                }
 
 
             }
 
         });
 
-        Scene scene = new Scene(vBox,700, 500);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("TINY Compiler");
-        primaryStage.show();
+        Scene scene = new Scene(vBox, 700, 500);
+        stage.setScene(scene);
+        stage.setTitle("TINY Compiler");
+        stage.show();
     }
+    public void OutputScene(Stage stage, String tokens){
 
+        tokensLabel = new Label("Tokens");
+        tokensTextArea = new TextArea(tokens);
+        returnButton = new Button("return");
+
+        tokensLabel.setTextFill(Color.DARKBLUE);
+        tokensLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 28));
+        tokensTextArea.setEditable(false);
+        tokensTextArea.setWrapText(true);
+        tokensTextArea.setPrefHeight(500);
+
+        flowPane = new FlowPane(tokensLabel);
+        flowPane.setAlignment(Pos.CENTER);
+        returnFlowPane = new FlowPane(returnButton);
+        returnFlowPane.setAlignment(Pos.CENTER);
+
+        vBox = new VBox(flowPane, tokensTextArea, returnFlowPane);
+        vBox.setSpacing(20);
+        vBox.setStyle("-fx-padding: 16;");
+
+        returnButton.setOnAction(action -> {
+            PrimaryScene(stage);
+        });
+
+        Scene scene = new Scene(vBox, 700, 500);
+        stage.setTitle("Scheduler Project");
+        stage.setScene(scene);
+        stage.show();
+    }
     public static void main(String[] args) {
         launch(args);
 
