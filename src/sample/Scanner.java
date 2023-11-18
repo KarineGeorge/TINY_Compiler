@@ -204,19 +204,19 @@ public class Scanner {
 
 
 
-    public static void main(String[] args) {
-        // Replace this with your Tiny code input
-        String tinyCode = " if Xyu1 := 2H 2 if then <= sj ";
-
-        // Create a Scanner instance with the input string
-        Scanner x = new Scanner(tinyCode);
-
-        // Call getAllTokens to collect and display all tokens
-        Queue<TokenRecord> tokenQueue = x.getAllTokens();
-
-        System.out.println(x.print(tokenQueue));
-        x.save();
-    }
+//    public static void main(String[] args) {
+//        // Replace this with your Tiny code input
+//        String tinyCode = " if Xyu1 := 2H 2 if then <= sj ";
+//
+//        // Create a Scanner instance with the input string
+//        Scanner x = new Scanner(tinyCode);
+//
+//        // Call getAllTokens to collect and display all tokens
+//        Queue<TokenRecord> tokenQueue = x.getAllTokens();
+//
+//        System.out.println(x.print(tokenQueue));
+//        x.save();
+//    }
 
 
     void save(){
