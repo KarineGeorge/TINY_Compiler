@@ -1,6 +1,8 @@
 package sample;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.io.File;
 import java.util.Queue;
@@ -17,6 +19,7 @@ public class Scanner {
     char[] tokenString = new char[MAXTOKENLEN];
 
     File tokenFile = null;
+    private StringBuilder records = new StringBuilder();
 
     public Scanner(String tinyCode) {
         this.tinyCode = tinyCode;
@@ -130,7 +133,7 @@ public class Scanner {
                                 if ( tokenStringIndex < MAXTOKENLEN) {
                                     tokenString[tokenStringIndex++] =  c;
                                 }
-                               c= getNextChar();
+                                c= getNextChar();
                             }
                             ungetChar();
                             save=false;
@@ -138,11 +141,11 @@ public class Scanner {
                             currentToken=TokenType.ERROR;
                         }
                         else{
-                        ungetChar();
-                        save = false;
-                        state = StateType.DONE;
-                        currentToken = TokenType.NUMBER;
-                    } }
+                            ungetChar();
+                            save = false;
+                            state = StateType.DONE;
+                            currentToken = TokenType.NUMBER;
+                        } }
                     break;
                 case INID:
                     if (!Character.isLetter(c)) {
@@ -176,11 +179,11 @@ public class Scanner {
             }
         }
 
-            tokenStr = new String(tokenString, 0, tokenStringIndex);
-            if (currentToken == TokenType.IDENTIFIER) {
-                currentToken = reservedLookup(tokenStr);
+        tokenStr = new String(tokenString, 0, tokenStringIndex);
+        if (currentToken == TokenType.IDENTIFIER) {
+            currentToken = reservedLookup(tokenStr);
 
-            }
+        }
 
         return new TokenRecord(currentToken,tokenStr);
     }
@@ -201,32 +204,50 @@ public class Scanner {
 
 
 
-//    public static void main(String[] args) {
-//        // Replace this with your Tiny code input
-//        String tinyCode = "if Xyu1 :=  2H 2 ; if then <= sj ";
-//
-//        // Create a Scanner instance with the input string
-//        Scanner x = new Scanner(tinyCode);
-//
-//        // Call getAllTokens to collect and display all tokens
-//        Queue<TokenRecord> tokenQueue = x.getAllTokens();
-//
-//        // Display the collected tokens
-//        while (!tokenQueue.isEmpty()) {
-//            TokenRecord token = tokenQueue.poll();
-//            System.out.println("Token Type: " + token.getTokenType() + ", Token Value: " + token.getTokenString());
-// }
-// }
+    public static void main(String[] args) {
+        // Replace this with your Tiny code input
+        String tinyCode = " if Xyu1 := 2H 2 if then <= sj ";
+
+        // Create a Scanner instance with the input string
+        Scanner x = new Scanner(tinyCode);
+
+        // Call getAllTokens to collect and display all tokens
+        Queue<TokenRecord> tokenQueue = x.getAllTokens();
+
+        System.out.println(x.print(tokenQueue));
+        x.save();
+    }
 
 
-//    void save(){
-//
-//    }
-//
-//    void print(){
-//
-//    }
+    void save(){
+        tokenFile = new File("Token File");
+        try {
+            FileWriter myWriter = new FileWriter(tokenFile);
+            myWriter.write(records.toString());
+            myWriter.close();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    String print(Queue<TokenRecord> tokenqueue){
+        String header = String.format("%-20s %-20s","Token Value", "Token Type") + "\n";
+        records.append(header);
+
+        while (!tokenqueue.isEmpty()) {
+            TokenRecord token = tokenqueue.poll();
+            if(token.getTokenType().toString().equals("ERROR")){
+                //records.setLength(0);
+                records.append("SYNTAX ERROR: " + "\"" +token.getTokenString()+ "\"" + " is an illegal sequence of characters");
+            }
+            else{
+                String Line = String.format("%-20s %-20s",token.getTokenString(),token.getTokenType());
+                records.append(Line+"\n");
+            }
+        }
+
+        return records.toString();
+    }
 
 }
