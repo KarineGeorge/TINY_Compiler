@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Queue;
 
 public class Compiler extends Application {
     private Label tinyCompilerLabel;
@@ -44,7 +45,7 @@ public class Compiler extends Application {
     String codeText = null;
     String codeArea = null;
 
-    Scanner tinyScanner = null;
+    static Scanner tinyScanner = null;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -88,19 +89,18 @@ public class Compiler extends Application {
         selectButton.setOnAction(action -> {
             selectedFile = fileChooser.showOpenDialog(stage);
         });
+
         runButton.setOnAction(action -> {
 
             codeArea = codeTextArea.getText();
 
             if (selectedFile != null) {
-
                 try {
                     codeText = Files.readString(Path.of(selectedFile.getPath()));
                     //System.out.println(codeText);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             } else if (!codeArea.isBlank()) {
                 codeText = codeArea;
                 //System.out.println(codeText);
@@ -113,16 +113,15 @@ public class Compiler extends Application {
 
             if (codeText != null) {
                 tinyScanner = new Scanner(codeText);
-                String tokens = "";
+                Queue<TokenRecord> tokenQueue = tinyScanner.getAllTokens();
+                String tokens = tinyScanner.print(tokenQueue);
+                tinyScanner.save();
                 OutputScene(stage,tokens);
-
-
-
             }
 
         });
 
-        Scene scene = new Scene(vBox, 700, 500);
+        Scene scene = new Scene(vBox, 850, 700);
         stage.setScene(scene);
         stage.setTitle("TINY Compiler");
         stage.show();
@@ -137,7 +136,7 @@ public class Compiler extends Application {
         tokensLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 28));
         tokensTextArea.setEditable(false);
         tokensTextArea.setWrapText(true);
-        tokensTextArea.setPrefHeight(500);
+        tokensTextArea.setPrefHeight(600);
 
         flowPane = new FlowPane(tokensLabel);
         flowPane.setAlignment(Pos.CENTER);
@@ -152,7 +151,7 @@ public class Compiler extends Application {
             PrimaryScene(stage);
         });
 
-        Scene scene = new Scene(vBox, 700, 500);
+        Scene scene = new Scene(vBox, 850, 700);
         stage.setTitle("Scheduler Project");
         stage.setScene(scene);
         stage.show();
@@ -160,7 +159,12 @@ public class Compiler extends Application {
     public static void main(String[] args) {
         launch(args);
 
-
+//        tinyScanner = new Scanner(
+//                "()");
+//        Queue<TokenRecord> tokenQueue = tinyScanner.getAllTokens();
+//        String tokens = tinyScanner.print(tokenQueue);
+//        System.out.println(tokens);
+//        tinyScanner.save();
 
     }
 }

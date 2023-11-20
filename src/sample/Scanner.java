@@ -121,7 +121,8 @@ public class Scanner {
                     if (c == '=')
                         currentToken = TokenType.ASSIGN;
                     else {
-                        ungetChar();
+                        if(c!='\0')
+                            ungetChar();
                         save = false;
                         currentToken = TokenType.ERROR;
                     }
@@ -141,7 +142,8 @@ public class Scanner {
                             currentToken=TokenType.ERROR;
                         }
                         else{
-                            ungetChar();
+                            if(c!='\0')
+                                ungetChar();
                             save = false;
                             state = StateType.DONE;
                             currentToken = TokenType.NUMBER;
@@ -162,7 +164,8 @@ public class Scanner {
                             currentToken=TokenType.ERROR;
                         }
                         else{
-                            ungetChar();
+                            if(c != '\0')
+                                ungetChar();
                             save = false;
                             state = StateType.DONE;
                             currentToken = TokenType.IDENTIFIER;
@@ -239,7 +242,7 @@ public class Scanner {
             TokenRecord token = tokenqueue.poll();
             if(token.getTokenType().toString().equals("ERROR")){
                 //records.setLength(0);
-                records.append("SYNTAX ERROR: " + "\"" +token.getTokenString()+ "\"" + " is an illegal sequence of characters");
+                records.append("\nSYNTAX ERROR: " + "\"" +token.getTokenString()+ "\"" + " is an illegal sequence of characters");
             }
             else{
                 String Line = String.format("%-20s %-20s",token.getTokenString(),token.getTokenType());

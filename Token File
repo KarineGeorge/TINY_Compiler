@@ -1,0 +1,16 @@
+Token Value          Token Type          
+read                 READ                
+x                    IDENTIFIER          
+;                    SEMICOLON           
+if                   IF                  
+0                    NUMBER              
+<                    LESSTHAN            
+x                    IDENTIFIER          
+then                 THEN                
+fact                 IDENTIFIER          
+:=                   ASSIGN              
+1                    NUMBER              
+;                    SEMICOLON           
+repeat               REPEAT              
+
+SYNTAX ERROR: "%" is an illegal sequence of characters
