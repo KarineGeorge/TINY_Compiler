@@ -97,13 +97,11 @@ public class Compiler extends Application {
             if (selectedFile != null) {
                 try {
                     codeText = Files.readString(Path.of(selectedFile.getPath()));
-                    //System.out.println(codeText);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (!codeArea.isBlank()) {
                 codeText = codeArea;
-                //System.out.println(codeText);
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
@@ -113,6 +111,7 @@ public class Compiler extends Application {
 
             if (codeText != null) {
                 tinyScanner = new Scanner(codeText);
+                codeText = null;
                 Queue<TokenRecord> tokenQueue = tinyScanner.getAllTokens();
                 String tokens = tinyScanner.print(tokenQueue);
                 tinyScanner.save();
