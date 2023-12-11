@@ -58,7 +58,9 @@ public class Parser {
                     TreeNode condition = expression();
                     match(TokenType.THEN);
                     TreeNode thenBranch = stmtSequence();
+                    match(TokenType.END);
                     return createNode("IF", condition, thenBranch);
+
                 case REPEAT:
                     match(TokenType.REPEAT);
                     TreeNode repeatStmt = stmtSequence();
@@ -82,9 +84,9 @@ public class Parser {
                     return createNode("WRITE", null, writeExpr);
                 case THEN:
                     break;
-                case END:
-                    match(TokenType.END);
-                    return createNode("END");
+//                case END:
+//                    match(TokenType.END);
+//                    return createNode("END");
                 default:
                     error("Unexpected token in statement: " + currentTokenRecord.getTokenType());
             }
