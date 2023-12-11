@@ -128,6 +128,60 @@ public class Parser {
         }
         return factorExpr;
     }
+    private TreeNode factor() {
+        if (currentTokenRecord != null) {
+            if (currentTokenRecord.getTokenType() == TokenType.OPENBRACKET) {
+                match(TokenType.OPENBRACKET);
+                TreeNode expressionNode = expression();
+                match(TokenType.CLOSEDBRACKET);
+                return expressionNode;
+            } else if (currentTokenRecord.getTokenType() == TokenType.NUMBER ||
+                    currentTokenRecord.getTokenType() == TokenType.IDENTIFIER) {
+                TreeNode leafNode = createNode(currentTokenRecord.getTokenType()+"("+currentTokenRecord.getTokenString()+")");
+                match(currentTokenRecord.getTokenType());
+                return leafNode;
+            } else {
+                error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
+            }
+        }
+        return null;
+    }
+
+    private void match(TokenType expectedToken) {
+        if (currentTokenRecord.getTokenType() == expectedToken) {
+            currentTokenRecord = getNextTokenRecord();
+        } else {
+            error("Unexpected token: " + currentTokenRecord.getTokenType() + ". Expected: " + expectedToken);
+        }
+    }
+
+    private void error(String message) {
+        System.err.println("Error: " + message);
+        System.exit(1);
+    }
+
+    public static void main(String[] args) {
+        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
+                "}\n" +
+                "read x; {input an integer }\n" +
+                "if 0 < x then { don’t compute if x <= 0 }\n" +
+                "fact := 1;\n" +
+                "repeat\n" +
+                "fact := fact * x;\n" +
+                "x := x - 1\n" +
+                "until x = 0;\n" +
+                "write fact { output factorial of x }\n" +
+                "end"; // Replace with your TINY code
+        Scanner scanner = new Scanner(tinyCode);
+        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
+
+        Parser parser = new Parser(tokenRecordsQueue);
+        TreeNode parseTree = parser.parse();
+
+        // Print the parse tree
+        System.out.println("Parse tree:");
+        parseTree.printTree();
+    }
 
 
 }
