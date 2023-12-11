@@ -218,11 +218,13 @@ public class Scanner {
     }
 
     String print(Queue<TokenRecord> tokenqueue){
+        TokenRecord tokenRecord;
+        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(tokenqueue);
         String header = String.format("%-20s %-20s","Token Value", "Token Type") + "\n";
         records.append(header);
 
-        while (!tokenqueue.isEmpty()) {
-            TokenRecord token = tokenqueue.poll();
+        while (!tokenRecordsQueue.isEmpty()) {
+            TokenRecord token = tokenRecordsQueue.poll();
             if(token.getTokenType().toString().equals("ERROR")){
                 //records.setLength(0);
                 records.append("\nSYNTAX ERROR: " + "\"" +token.getTokenString()+ "\"" + " is an illegal sequence of characters");
