@@ -42,7 +42,7 @@ class TreeNode {
 
     private void printTree(TreeNode node, int indent) {
         if (node != null ) {
-            if(!node.label.equals("")){
+            if(node.label != null){
                 System.out.print(getIndentString(indent));
                 System.out.println(node.getLabel()+" :"+node.getShape());
                 printTree(node.getLeft(), indent + 1);

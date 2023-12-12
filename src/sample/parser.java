@@ -40,7 +40,7 @@ public class Parser {
         while (currentTokenRecord != null && currentTokenRecord.getTokenType() == TokenType.SEMICOLON) {
             match(TokenType.SEMICOLON);
             TreeNode statement = statement();
-            nextNode = createNode("","no shape", nextNode, statement);
+            nextNode = createNode(null,"no shape", nextNode, statement);
         }
 
         return nextNode;
