@@ -5,8 +5,20 @@ class TreeNode {
     private String shape;
     private TreeNode left;
     private TreeNode right;
+    private int id;
+    static private int staticId = 0;
 
-    public TreeNode(String label,String shape) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public TreeNode(String label, String shape) {
+        id = staticId;
+        staticId++;
         this.label = label;
         this.shape=shape;
         this.left = null;
@@ -14,6 +26,9 @@ class TreeNode {
     }
 
     public TreeNode(String label,String shape, TreeNode left, TreeNode right) {
+
+        id = staticId;
+        staticId++;
         this.label = label;
         this.shape=shape;
         this.left = left;
