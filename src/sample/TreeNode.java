@@ -2,23 +2,30 @@ package sample;
 
 class TreeNode {
     private String label;
+    private String shape;
     private TreeNode left;
     private TreeNode right;
 
-    public TreeNode(String label) {
+    public TreeNode(String label,String shape) {
         this.label = label;
+        this.shape=shape;
         this.left = null;
         this.right = null;
     }
 
-    public TreeNode(String label, TreeNode left, TreeNode right) {
+    public TreeNode(String label,String shape, TreeNode left, TreeNode right) {
         this.label = label;
+        this.shape=shape;
         this.left = left;
         this.right = right;
     }
 
     public String getLabel() {
         return label;
+    }
+
+    public String getShape() {
+        return shape;
     }
 
     public TreeNode getLeft() {
@@ -37,7 +44,7 @@ class TreeNode {
         if (node != null ) {
             if(!node.label.equals("")){
                 System.out.print(getIndentString(indent));
-                System.out.println(node.getLabel());
+                System.out.println(node.getLabel()+" :"+node.getShape());
                 printTree(node.getLeft(), indent + 1);
                 printTree(node.getRight(), indent + 1);
             }
