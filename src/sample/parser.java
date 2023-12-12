@@ -59,29 +59,28 @@ public class Parser {
                     match(TokenType.THEN);
                     TreeNode thenBranch = stmtSequence();
                     match(TokenType.END);
-                    return createNode("IF", "rectangle",condition, thenBranch);
+                    return createNode("if", "rectangle",condition, thenBranch);
 
                 case REPEAT:
                     match(TokenType.REPEAT);
                     TreeNode repeatStmt = stmtSequence();
                     match(TokenType.UNTIL);
                     TreeNode untilCondition = expression();
-                    return createNode("REPEAT","rectangle", repeatStmt, createNode("UNTIL","oval", untilCondition, null));
+                    return createNode("repeat","rectangle", repeatStmt,untilCondition);
                 case IDENTIFIER:
-                    value= "("+currentTokenRecord.getTokenString()+")";
                     match(TokenType.IDENTIFIER);
                     match(TokenType.ASSIGN);
                     TreeNode assignmentExpr = expression();
-                    return createNode("ASSIGN"+value,"rectangle", null ,assignmentExpr);
+                    return createNode("assign(id)","rectangle", null ,assignmentExpr);
                 case READ:
                     match(TokenType.READ);
                     value = "(" + currentTokenRecord.getTokenString() + ")";
                     match(TokenType.IDENTIFIER);
-                    return createNode("READ"+value,"rectangle", null, null);
+                    return createNode("read"+value,"rectangle", null, null);
                 case WRITE:
                     match(TokenType.WRITE);
                     TreeNode writeExpr = expression();
-                    return createNode("WRITE","rectangle", null, writeExpr);
+                    return createNode("write","rectangle", null, writeExpr);
                 case THEN:
                     break;
 //                case END:
@@ -111,7 +110,7 @@ public class Parser {
         TreeNode termExpr = term();
         while (currentTokenRecord != null && (currentTokenRecord.getTokenType() == TokenType.PLUS ||
                 currentTokenRecord.getTokenType() == TokenType.MINUS)) {
-            String op = "OP("+currentTokenRecord.getTokenString()+")";
+            String op = "op("+currentTokenRecord.getTokenString()+")";
             match(currentTokenRecord.getTokenType());
             TreeNode rightTerm = term();
             termExpr = createNode(op,"oval" ,termExpr, rightTerm);
@@ -137,12 +136,19 @@ public class Parser {
                 TreeNode expressionNode = expression();
                 match(TokenType.CLOSEDBRACKET);
                 return expressionNode;
-            } else if (currentTokenRecord.getTokenType() == TokenType.NUMBER ||
+            }
+            else if (currentTokenRecord.getTokenType() == TokenType.NUMBER ||
                     currentTokenRecord.getTokenType() == TokenType.IDENTIFIER) {
-                TreeNode leafNode = createNode(currentTokenRecord.getTokenType()+"("+currentTokenRecord.getTokenString()+")","oval");
+                TreeNode leafNode;
+                if (currentTokenRecord.getTokenType() == TokenType.NUMBER) {
+                    leafNode = createNode("constant" + "(" + currentTokenRecord.getTokenString() + ")", "oval");
+                } else {
+                    leafNode = createNode("id" + "(" + currentTokenRecord.getTokenString() + ")", "oval");
+                }
                 match(currentTokenRecord.getTokenType());
                 return leafNode;
-            } else {
+            }
+            else {
                 error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
             }
         }
@@ -162,28 +168,28 @@ public class Parser {
         System.exit(1);
     }
 
-//    public static void main(String[] args) {
-//        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
-//                "}\n" +
-//                "read x; {input an integer }\n" +
-//                "if 0 < x then { don’t compute if x <= 0 }\n" +
-//                "fact := 1;\n" +
-//                "repeat\n" +
-//                "fact := fact * x;\n" +
-//                "x := x - 1\n" +
-//                "until x = 0;\n" +
-//                "write fact { output factorial of x }\n" +
-//                "end"; // Replace with your TINY code
-//        Scanner scanner = new Scanner(tinyCode);
-//        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
-//
-//        Parser parser = new Parser(tokenRecordsQueue);
-//        TreeNode parseTree = parser.parse();
-//
-//        // Print the parse tree
-//        System.out.println("Parse tree:");
-//        parseTree.printTree();
-//    }
+    public static void main(String[] args) {
+        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
+                "}\n" +
+                "read x; {input an integer }\n" +
+                "if 0 < x then { don’t compute if x <= 0 }\n" +
+                "fact := 1;\n" +
+                "repeat\n" +
+                "fact := fact * x;\n" +
+                "x := x - 1\n" +
+                "until x = 0;\n" +
+                "write fact { output factorial of x }\n" +
+                "end"; // Replace with your TINY code
+        Scanner scanner = new Scanner(tinyCode);
+        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
+
+        Parser parser = new Parser(tokenRecordsQueue);
+        TreeNode parseTree = parser.parse();
+
+        // Print the parse tree
+        System.out.println("Parse tree:");
+        parseTree.printTree();
+    }
 
 
 }
