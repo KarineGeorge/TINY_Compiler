@@ -13,8 +13,13 @@ public class Parser {
     }
 
     private TokenRecord getNextTokenRecord() {
-        return allTokenRecord.poll();
+        if (allTokenRecord.isEmpty()) {
+            return new TokenRecord(TokenType.EOF, "END");
+        } else {
+            return allTokenRecord.poll();
+        }
     }
+
 
     private TreeNode createNode(String label, String shape ,TreeNode left, TreeNode right) {
         return new TreeNode(label,shape, left, right);
@@ -30,14 +35,16 @@ public class Parser {
     }
 
     private TreeNode program() {
-        return stmtSequence();
+        TreeNode tr =stmtSequence();
+        match(TokenType.EOF);
+        return tr;
     }
 
     private TreeNode stmtSequence() {
         TreeNode statementNode = statement();
         TreeNode nextNode = statementNode;
 
-        while (currentTokenRecord != null && currentTokenRecord.getTokenType() == TokenType.SEMICOLON) {
+        while (currentTokenRecord.getTokenType() == TokenType.SEMICOLON) {
             match(TokenType.SEMICOLON);
             TreeNode statement = statement();
             nextNode = createNode(null,"no shape", nextNode, statement);
@@ -48,7 +55,6 @@ public class Parser {
 
     private TreeNode statement() {
 
-        if (currentTokenRecord != null) {
             String value=null;
             switch (currentTokenRecord.getTokenType()) {
                 case SEMICOLON:
@@ -84,21 +90,18 @@ public class Parser {
                     return createNode("write","rectangle", null, writeExpr);
                 case THEN:
                     break;
-//                case END:
-//                    match(TokenType.END);
-//                    return createNode("END");
                 default:
                     error("Unexpected token in statement: " + currentTokenRecord.getTokenType());
             }
-        }
+
         return null;
     }
 
 
     private TreeNode expression() {
         TreeNode simpleExpr = simpleExpression();
-        if (currentTokenRecord != null && (currentTokenRecord.getTokenType() == TokenType.LESSTHAN ||
-                currentTokenRecord.getTokenType() == TokenType.EQUAL)) {
+        if (currentTokenRecord.getTokenType() == TokenType.LESSTHAN ||
+                currentTokenRecord.getTokenType() == TokenType.EQUAL) {
             String op ="op(" +currentTokenRecord.getTokenString()+")";
             match( currentTokenRecord.getTokenType());
             TreeNode rightExpr = simpleExpression();
@@ -109,8 +112,8 @@ public class Parser {
 
     private TreeNode simpleExpression() {
         TreeNode termExpr = term();
-        while (currentTokenRecord != null && (currentTokenRecord.getTokenType() == TokenType.PLUS ||
-                currentTokenRecord.getTokenType() == TokenType.MINUS)) {
+        while  (currentTokenRecord.getTokenType() == TokenType.PLUS ||
+                currentTokenRecord.getTokenType() == TokenType.MINUS) {
             String op = "op("+currentTokenRecord.getTokenString()+")";
             match(currentTokenRecord.getTokenType());
             TreeNode rightTerm = term();
@@ -121,8 +124,8 @@ public class Parser {
 
     private TreeNode term() {
         TreeNode factorExpr = factor();
-        while (currentTokenRecord != null && (currentTokenRecord.getTokenType() == TokenType.MULT ||
-                currentTokenRecord.getTokenType() == TokenType.DIV)) {
+        while (currentTokenRecord.getTokenType() == TokenType.MULT ||
+                currentTokenRecord.getTokenType() == TokenType.DIV) {
             String op ="op(" +currentTokenRecord.getTokenString()+")";
             match(currentTokenRecord.getTokenType());
             TreeNode rightFactor = factor();
@@ -131,7 +134,6 @@ public class Parser {
         return factorExpr;
     }
     private TreeNode factor() {
-        if (currentTokenRecord != null) {
             if (currentTokenRecord.getTokenType() == TokenType.OPENBRACKET) {
                 match(TokenType.OPENBRACKET);
                 TreeNode expressionNode = expression();
@@ -152,7 +154,7 @@ public class Parser {
             else {
                 error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
             }
-        }
+
         return null;
     }
 
@@ -169,28 +171,29 @@ public class Parser {
         System.exit(1);
     }
 
-    public static void main(String[] args) {
-        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
-                "}\n" +
-                "read x; {input an integer }\n" +
-                "if 0 < x then { don’t compute if x <= 0 }\n" +
-                "fact := 1;\n" +
-                "repeat\n" +
-                "fact := fact * x;\n" +
-                "x := x - 1\n" +
-                "until x = 0;\n" +
-                "write fact { output factorial of x }\n" +
-                "end"; // Replace with your TINY code
-        Scanner scanner = new Scanner(tinyCode);
-        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
-
-        Parser parser = new Parser(tokenRecordsQueue);
-        TreeNode parseTree = parser.parse();
-
-        // Print the parse tree
-        System.out.println("Parse tree:");
-        parseTree.printTree();
-    }
+//    public static void main(String[] args) {
+//        String tinyCode = "{ Fibonacci sequence }\n" +
+//                "read n;\n" +
+//                "a := 0;\n" +
+//                "b := 0;\n" +
+//                "write a;\n" +
+//                "write b;\n" +
+//                "repeat\n" +
+//                "  c := a + b;\n" +
+//                "  write c;\n" +
+//                "  a := b;\n" +
+//                "  b :=c\n" +
+//                "until c< n"; // Replace with your TINY code
+//        Scanner scanner = new Scanner(tinyCode);
+//        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
+//        System.out.println(scanner.print(tokenRecordsQueue));
+//        Parser parser = new Parser(tokenRecordsQueue);
+//        TreeNode parseTree = parser.parse();
+//
+//        // Print the parse tree
+//        System.out.println("Parse tree:");
+//        parseTree.printTree();
+//    }
 
 
 }
