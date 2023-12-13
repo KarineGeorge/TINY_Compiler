@@ -15,7 +15,7 @@ public class OvalCell extends Cell {
         double height = 100;
 
 //        Polygon view = new Polygon( width / 2, 0, width, height, 0, height);
-        Ellipse view = new Ellipse(100,50,100,50);
+        Ellipse view = new Ellipse(50,25,50,25);
 
         Text text = new Text(name);
         StackPane stackPane = new StackPane();

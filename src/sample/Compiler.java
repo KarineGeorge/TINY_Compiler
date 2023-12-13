@@ -196,12 +196,12 @@ public class Compiler extends Application {
 
         addGraphComponents();
 
-        Layout layout = new RandomLayout(graph);
-        layout.execute();
+        //Layout layout = new RandomLayout(graph);
+        //layout.execute();
 
     }
 
-    void drawTree(TreeNode node, int parentId){
+    void drawTree(TreeNode node, int parentId, int x, int y){
         if (node != null ) {
             if(node.getLabel() != null){
 
@@ -214,17 +214,70 @@ public class Compiler extends Application {
                     model.addCell(node.getId() + "", CellType.RECTANGLE, node.getLabel());
                 }
 
+                int index = model.getAddedCells().size()-1;
+                model.getAddedCells().get(index).relocate(x,y);
+
                 if(parentId!=-1){
                     model.addEdge(parentId+"", node.getId()+"");
                 }
 
-                drawTree(node.getLeft(), node.getId());
-                drawTree(node.getRight(), node.getId());
+                if(node.getLeft()==null || node.getRight()==null){
+                    drawTree(node.getLeft(), node.getId(), x-100,y + 100);
+                    drawTree(node.getRight(), node.getId(), x-100, y + 100);
+                }else{
+                    drawTree(node.getLeft(), node.getId(), x-100,y + 100);
+                    drawTree(node.getRight(), node.getId(), x+100, y + 100);
+                }
+
             }
             else {
                 System.out.println("null node: " + node.getId());
-                drawTree(node.getLeft(), parentId);
-                drawTree(node.getRight(), -1);
+
+
+                if(node.getLeft().getLabel()==null) {
+
+                    int tempY= y;
+                    TreeNode temp = node.getLeft();
+                    while(temp.getLabel()==null){
+                        if(temp.getRight()!=null){
+                            temp = temp.getRight();
+
+                        }else{
+                            temp = temp.getLeft();
+
+                        }
+                        tempY+=350;
+                    }
+                    drawTree(node.getLeft(), parentId, x+25, y);
+                    drawTree(node.getRight(), -1, x+350, y);
+
+
+                }else if(node.getRight().getLabel()==null) {
+
+                    int tempy = y;
+                    TreeNode temp = node.getRight();
+                    while (temp.getLabel() == null) {
+                        if (temp.getLeft() != null) {
+                            temp = temp.getLeft();
+
+                        } else {
+                            temp = temp.getRight();
+                        }
+                        y+=200;
+                    }
+                    drawTree(node.getLeft(), parentId, x+25, y);
+                    drawTree(node.getRight(), -1, x+350 , y);
+                }else {
+
+                    drawTree(node.getLeft(), parentId, x+25, y+200);
+                    drawTree(node.getRight(), -1, x + 350, y+200);
+                }
+
+
+
+
+
+
             }
 
         }
@@ -233,7 +286,7 @@ public class Compiler extends Application {
 
     }
 
-    void drawEdges(TreeNode node){
+    void drawEdges(TreeNode node, int parentId){
         if (node != null ) {
             if(node.getLabel() != null){
 //                if(node.getLeft() != null && node.getLeft().getLabel() == null){
@@ -248,17 +301,41 @@ public class Compiler extends Application {
 //                }
 
 
-                drawEdges(node.getLeft());
-                drawEdges(node.getRight());
+                drawEdges(node.getLeft(), node.getId());
+                drawEdges(node.getRight(), node.getId());
             }
             else {
+                if(node.getLeft().getLabel()==null) {
 
-                if(node.getLeft().getLabel()!=null && node.getRight().getLabel()!=null) {
+                    TreeNode temp = node.getLeft();
+                    while(temp.getLabel()==null){
+                        if(temp.getRight()!=null){
+                            temp = temp.getRight();
+                        }else{
+                            temp = temp.getLeft();
+                        }
+                    }
+
+                    model.addEdge(temp.getId() + "", node.getRight().getId() + "");
+                }else if(node.getRight().getLabel()==null) {
+
+                    TreeNode temp = node.getRight();
+                    while(temp.getLabel()==null){
+                        if(temp.getLeft()!=null){
+                            temp = temp.getLeft();
+                        }else{
+                            temp = temp.getRight();
+                        }
+                    }
+
+                    model.addEdge(node.getLeft().getId() + "", parentId + "");
+                }
+                else {
                     model.addEdge(node.getLeft().getId() + "", node.getRight().getId() + "");
                 }
 
-                drawEdges(node.getLeft());
-                drawEdges(node.getRight());
+                drawEdges(node.getLeft(), parentId);
+                drawEdges(node.getRight(), parentId);
             }
 
         }
@@ -302,8 +379,8 @@ public class Compiler extends Application {
         Parser parser = new Parser(tokenRecordsQueue);
         TreeNode parseTree = parser.parse();
 
-        drawTree(parseTree,-1);
-        drawEdges(parseTree);
+        drawTree(parseTree,-1, 100,-50);
+        drawEdges(parseTree,-1);
 
 
         graph.endUpdate();
