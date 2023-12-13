@@ -68,10 +68,11 @@ public class Parser {
                     TreeNode untilCondition = expression();
                     return createNode("repeat","rectangle", repeatStmt,untilCondition);
                 case IDENTIFIER:
+                    value = "(" + currentTokenRecord.getTokenString() + ")";
                     match(TokenType.IDENTIFIER);
                     match(TokenType.ASSIGN);
                     TreeNode assignmentExpr = expression();
-                    return createNode("assign(id)","rectangle", null ,assignmentExpr);
+                    return createNode("assign"+value,"rectangle", null ,assignmentExpr);
                 case READ:
                     match(TokenType.READ);
                     value = "(" + currentTokenRecord.getTokenString() + ")";
