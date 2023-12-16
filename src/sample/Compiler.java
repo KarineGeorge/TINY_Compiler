@@ -179,7 +179,8 @@ public class Compiler extends Application {
 
     Graph graph = new Graph();
     Model model;
-
+    static int xAxis = -200;
+    static int yAxis = -50;
 
     @Override
     public void start(Stage primaryStage) {
@@ -201,7 +202,7 @@ public class Compiler extends Application {
 
     }
 
-    void drawTree(TreeNode node, int parentId, int x, int y){
+    void drawTree(TreeNode node, int parentId, int y){
         if (node != null ) {
             if(node.getLabel() != null){
 
@@ -215,75 +216,36 @@ public class Compiler extends Application {
                 }
 
                 int index = model.getAddedCells().size()-1;
-                model.getAddedCells().get(index).relocate(x,y);
+                model.getAddedCells().get(index).relocate(xAxis,y);
 
                 if(parentId!=-1){
                     model.addEdge(parentId+"", node.getId()+"");
                 }
 
-                if(node.getLeft()==null || node.getRight()==null){
-                    drawTree(node.getLeft(), node.getId(), x-100,y + 100);
-                    drawTree(node.getRight(), node.getId(), x-100, y + 100);
-                }else{
-                    drawTree(node.getLeft(), node.getId(), x-100,y + 100);
-                    drawTree(node.getRight(), node.getId(), x+100, y + 100);
+                if(node.getLeft()!=null || node.getRight()!=null){
+                    yAxis+=100;
                 }
+//
+//                if(node.getLeft()!=null){
+//
+//                }
+                drawTree(node.getLeft(), node.getId(), y+100);
+                if(node.getRight()!=null && node.getLeft()!=null){
+                    xAxis+=150;
+                }
+                drawTree(node.getRight(), node.getId(), y+100);
 
             }
             else {
                 System.out.println("null node: " + node.getId());
 
-
-                if(node.getLeft().getLabel()==null) {
-
-                    int tempY= y;
-                    TreeNode temp = node.getLeft();
-                    while(temp.getLabel()==null){
-                        if(temp.getRight()!=null){
-                            temp = temp.getRight();
-
-                        }else{
-                            temp = temp.getLeft();
-
-                        }
-                        tempY+=350;
-                    }
-                    drawTree(node.getLeft(), parentId, x+25, y);
-                    drawTree(node.getRight(), -1, x+350, y);
-
-
-                }else if(node.getRight().getLabel()==null) {
-
-                    int tempy = y;
-                    TreeNode temp = node.getRight();
-                    while (temp.getLabel() == null) {
-                        if (temp.getLeft() != null) {
-                            temp = temp.getLeft();
-
-                        } else {
-                            temp = temp.getRight();
-                        }
-                        y+=200;
-                    }
-                    drawTree(node.getLeft(), parentId, x+25, y);
-                    drawTree(node.getRight(), -1, x+350 , y);
-                }else {
-
-                    drawTree(node.getLeft(), parentId, x+25, y+200);
-                    drawTree(node.getRight(), -1, x + 350, y+200);
-                }
-
-
-
-
-
-
+                xAxis+=50;
+                yAxis+=25;
+                drawTree(node.getLeft(), parentId, y);
+                xAxis+=125;
+                drawTree(node.getRight(), -1,y);
             }
-
         }
-
-
-
     }
 
     void drawEdges(TreeNode node, int parentId){
@@ -346,21 +308,18 @@ public class Compiler extends Application {
 
         graph.beginUpdate();
 
-//        model.addCell("Cell A", CellType.RECTANGLE, "I'm a rectangle");
-//        model.addCell("Cell B", CellType.RECTANGLE, "I'm a rectangle");
-//        model.addCell("Cell C", CellType.RECTANGLE, "I'm a rectangle");
-//        model.addCell("Cell D", CellType.OVAL, "I'm a rectangle");
-//        model.addCell("Cell E", CellType.OVAL, "I'm a rectangle");
-//        model.addCell("Cell F", CellType.RECTANGLE, "I'm a rectangle");
-//        model.addCell("Cell G", CellType.RECTANGLE, "I'm a rectangle");
-//
-//        model.addEdge("Cell A", "Cell B");
-//        model.addEdge("Cell A", "Cell C");
-//        model.addEdge("Cell B", "Cell C");
-//        model.addEdge("Cell C", "Cell D");
-//        model.addEdge("Cell B", "Cell E");
-//        model.addEdge("Cell D", "Cell F");
-//        model.addEdge("Cell D", "Cell G");
+//        String tinyCode = "{ Fibonacci sequence }\n" +
+//                "read n;\n" +
+//                "a := 0;\n" +
+//                "b := 0;\n" +
+//                "write a;\n" +
+//                "write b;\n" +
+//                "repeat\n" +
+//                "  c := a + b;\n" +
+//                "  write c;\n" +
+//                "  a := b;\n" +
+//                "  b :=c\n" +
+//             "until c<n";
 
         String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
                 "}\n" +
@@ -373,13 +332,14 @@ public class Compiler extends Application {
                 "until x = 0;\n" +
                 "write fact { output factorial of x }\n" +
                 "end"; // Replace with your TINY code
+        
         Scanner scanner = new Scanner(tinyCode);
         Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
 
         Parser parser = new Parser(tokenRecordsQueue);
         TreeNode parseTree = parser.parse();
 
-        drawTree(parseTree,-1, 100,-50);
+        drawTree(parseTree,-1, -50);
         drawEdges(parseTree,-1);
 
 
