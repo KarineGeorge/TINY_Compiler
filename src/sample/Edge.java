@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class Edge extends Group {
@@ -19,6 +20,9 @@ public class Edge extends Group {
         target.addCellParent(source);
 
         line = new Line();
+
+        line.setStroke(Color.rgb(151, 158, 168));
+        line.setStrokeWidth(2);
 
         line.startXProperty().bind( source.layoutXProperty().add(source.getBoundsInParent().getWidth() / 2.0));
         line.startYProperty().bind( source.layoutYProperty().add(source.getBoundsInParent().getHeight() / 2.0));
