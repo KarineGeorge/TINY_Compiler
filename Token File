@@ -1,9 +1,39 @@
 Token Value          Token Type          
 read                 READ                
-x                    IDENTIFIER          
+n                    IDENTIFIER          
 ;                    SEMICOLON           
-x                    IDENTIFIER          
+a                    IDENTIFIER          
 :=                   ASSIGN              
-10                   NUMBER              
-
-SYNTAX ERROR: "%" is an illegal sequence of characters
+0                    NUMBER              
+;                    SEMICOLON           
+b                    IDENTIFIER          
+:=                   ASSIGN              
+0                    NUMBER              
+;                    SEMICOLON           
+write                WRITE               
+a                    IDENTIFIER          
+;                    SEMICOLON           
+write                WRITE               
+b                    IDENTIFIER          
+;                    SEMICOLON           
+repeat               REPEAT              
+c                    IDENTIFIER          
+:=                   ASSIGN              
+a                    IDENTIFIER          
++                    PLUS                
+b                    IDENTIFIER          
+;                    SEMICOLON           
+write                WRITE               
+c                    IDENTIFIER          
+;                    SEMICOLON           
+a                    IDENTIFIER          
+:=                   ASSIGN              
+b                    IDENTIFIER          
+;                    SEMICOLON           
+b                    IDENTIFIER          
+:=                   ASSIGN              
+c                    IDENTIFIER          
+until                UNTIL               
+c                    IDENTIFIER          
+<                    LESSTHAN            
+n                    IDENTIFIER          
