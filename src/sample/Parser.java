@@ -6,10 +6,14 @@ import java.util.Queue;
 public class Parser {
     private Queue<TokenRecord> allTokenRecord;
     private TokenRecord currentTokenRecord;
+    private String errorString;
+    private Boolean errorFlag;
 
     public Parser(Queue<TokenRecord> allTokenRecord) {
         this.allTokenRecord = new LinkedList<>(allTokenRecord);
         this.currentTokenRecord = getNextTokenRecord();
+        this.errorString=null;
+        this.errorFlag=false;
     }
 
     private TokenRecord getNextTokenRecord() {
@@ -19,7 +23,18 @@ public class Parser {
             return allTokenRecord.poll();
         }
     }
-
+    public String getErrorString() {
+        return this.errorString;
+    }
+    public void  setErrorString(String S) {
+        this.errorString=S;
+    }
+    public void setErrorFlag(boolean b){
+        this.errorFlag=b;
+    }
+    public boolean getErrorFlag(){
+        return this.errorFlag;
+    }
 
     private TreeNode createNode(String label, String shape ,TreeNode left, TreeNode right) {
         return new TreeNode(label,shape, left, right);
@@ -42,15 +57,15 @@ public class Parser {
 
     private TreeNode stmtSequence() {
         TreeNode statementNode = statement();
-        TreeNode nextNode = statementNode;
+
 
         while (currentTokenRecord.getTokenType() == TokenType.SEMICOLON) {
             match(TokenType.SEMICOLON);
             TreeNode statement = statement();
-            nextNode = createNode(null,"no shape", nextNode, statement);
+            statementNode = createNode(null,"no shape", statementNode, statement);
         }
 
-        return nextNode;
+        return statementNode;
     }
 
     private TreeNode statement() {
@@ -91,7 +106,8 @@ public class Parser {
                 case THEN:
                     break;
                 default:
-                    error("Unexpected token in statement: " + currentTokenRecord.getTokenType());
+
+//                    error("Unexpected token in statement: " + currentTokenRecord.getTokenType());
             }
 
         return null;
@@ -151,9 +167,9 @@ public class Parser {
                 match(currentTokenRecord.getTokenType());
                 return leafNode;
             }
-            else {
-                error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
-            }
+//            else {
+////                error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
+//            }
 
         return null;
     }
@@ -167,8 +183,10 @@ public class Parser {
     }
 
     private void error(String message) {
-        System.err.println("Error: " + message);
-        System.exit(1);
+        if(!this.errorFlag){
+        this.errorString=message;
+        this.errorFlag=true;
+        System.out.println(this.errorString);}
     }
 
 //    public static void main(String[] args) {
@@ -180,13 +198,12 @@ public class Parser {
 //                "write b;\n" +
 //                "repeat\n" +
 //                "  c := a + b;\n" +
-//                "  write c;\n" +
-//                "  a := b;\n" +
+//                "  write c\n" +
+//                "  a := b\n" +
 //                "  b :=c\n" +
-//                "until c< n"; // Replace with your TINY code
+//                "until c< n";; // Replace with your TINY code
 //        Scanner scanner = new Scanner(tinyCode);
 //        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
-//        System.out.println(scanner.print(tokenRecordsQueue));
 //        Parser parser = new Parser(tokenRecordsQueue);
 //        TreeNode parseTree = parser.parse();
 //
