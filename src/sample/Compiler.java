@@ -497,6 +497,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Deque;
 import java.util.Queue;
 
 public class Compiler extends Application {
@@ -595,16 +596,18 @@ public class Compiler extends Application {
             if (codeText != null) {
                 tinyScanner = new Scanner(codeText);
                 codeText = null;
-                Queue<TokenRecord> tokenQueue = tinyScanner.getAllTokens();
-                String tokens = tinyScanner.print(tokenQueue);
+                Deque<TokenRecord> tokenQueue = (Deque<TokenRecord>) tinyScanner.getAllTokens();
+                if(!tokenQueue.getLast().getTokenType().equals("ERROR")){
+                    parser = new Parser(tokenQueue);
+                }
+                String tokens = tinyScanner.print((Queue<TokenRecord>)tokenQueue);
                 tinyScanner.save();
-                parser = new Parser(tokenQueue);
                 OutputScene(stage,tokens);
             }
 
         });
 
-        Scene scene = new Scene(vBox, 850, 700);
+        Scene scene = new Scene(vBox, 1200, 775);
         stage.setScene(scene);
         stage.setTitle("TINY Compiler");
         stage.show();
@@ -612,13 +615,12 @@ public class Compiler extends Application {
     public void OutputScene(Stage stage, String tokens){
 
         BorderPane tree = new BorderPane();
-
         graph = new Graph();
 
         tree.setCenter(graph.getScrollPane());
 
-        addGraphComponents(parser.parse());
-        tokensLabel = new Label("Tokens");
+
+        tokensLabel = new Label("Tokens & Syntax tree");
         tokensTextArea = new TextArea(tokens);
         returnButton = new Button("return");
 
@@ -626,25 +628,46 @@ public class Compiler extends Application {
         tokensLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 28));
         tokensTextArea.setEditable(false);
         tokensTextArea.setWrapText(true);
-        tokensTextArea.setPrefHeight(200);
+        tokensTextArea.setPrefHeight(250);
 
         flowPane = new FlowPane(tokensLabel);
         flowPane.setAlignment(Pos.CENTER);
+
+        Label errorLabel = new Label("");
+        if(parser!=null){
+            TreeNode t = parser.parse();
+            if(parser.getErrorFlag()){
+                errorLabel = new Label(parser.getErrorString());
+            }else{
+                addGraphComponents(t);
+            }
+        }
+        FlowPane errorFlowPane = new FlowPane(errorLabel);
+        flowPane.setAlignment(Pos.CENTER);
+
         returnFlowPane = new FlowPane(returnButton);
         returnFlowPane.setAlignment(Pos.CENTER);
 
         HBox h = new HBox(tokensTextArea, tree);
 
-        vBox = new VBox(flowPane, tokensTextArea, tree, returnFlowPane);
+        ScrollPane scrollPane = new ScrollPane(tree);
+
+        vBox = new VBox(flowPane, tokensTextArea, scrollPane,errorFlowPane, returnFlowPane);
         vBox.setSpacing(20);
         vBox.setStyle("-fx-padding: 16;");
 
         returnButton.setOnAction(action -> {
+            parser = null;
+            tinyScanner = null;
+            Graph graph = new Graph();
+            Model model = null;
+            xAxis = -500;
+            yAxis = -50;
             PrimaryScene(stage);
         });
 
 
-        Scene scene = new Scene(vBox, 1000, 900);
+        Scene scene = new Scene(vBox, 1200, 775);
         stage.setTitle("Scheduler Project");
         stage.setScene(scene);
         stage.show();
@@ -673,10 +696,7 @@ public class Compiler extends Application {
                 if(node.getLeft()!=null || node.getRight()!=null){
                     yAxis+=100;
                 }
-//
-//                if(node.getLeft()!=null){
-//
-//                }
+
                 drawTree(node.getLeft(), node.getId(), y+100);
                 if(node.getRight()!=null && node.getLeft()!=null){
                     xAxis+=150;
@@ -690,7 +710,7 @@ public class Compiler extends Application {
                 xAxis+=50;
                 yAxis+=25;
                 drawTree(node.getLeft(), parentId, y);
-                xAxis+=125;
+                xAxis+=150;
                 drawTree(node.getRight(), -1,y);
             }
         }
@@ -699,35 +719,28 @@ public class Compiler extends Application {
     void drawEdges(TreeNode node, int parentId){
         if (node != null ) {
             if(node.getLabel() != null){
-//                if(node.getLeft() != null && node.getLeft().getLabel() == null){
-//                    if(node.getLeft().getLeft().getLabel() == null){}
-//                    System.out.println(node.getId()+" -> "+ node.getLeft().getLeft().getId() );
-//                    model.addEdge(node.getId()+"", node.getLeft().getLeft().getId()+"");
-//                }
-//                if(node.getRight()!=null && node.getRight().getLabel() == null){
-//                    System.out.println(node.getId()+" -> "+ node.getRight().getRight().getId() );
-//                    model.addEdge(node.getId()+"", node.getRight().getRight().getId()+"");
-//
-//                }
-
-
-                drawEdges(node.getLeft(), node.getId());
-                drawEdges(node.getRight(), node.getId());
+                if(node.getLeft()!=null)
+                    drawEdges(node.getLeft(), node.getId());
+                if(node.getRight()!=null)
+                    drawEdges(node.getRight(), node.getId());
             }
             else {
-                if(node.getLeft().getLabel()==null) {
-
+                if(node.getLeft()!=null && node.getLeft().getLabel()==null) {
                     TreeNode temp = node.getLeft();
-                    while(temp.getLabel()==null){
+                    while(temp!=null && temp.getLabel()==null){
                         if(temp.getRight()!=null){
                             temp = temp.getRight();
-                        }else{
+                        }else if(temp.getLeft()!=null){
                             temp = temp.getLeft();
+                        }else{
+                            temp = null;
                         }
                     }
+                    if(temp!=null){
+                        model.addEdge(temp.getId() + "", node.getRight().getId() + "");
+                    }
 
-                    model.addEdge(temp.getId() + "", node.getRight().getId() + "");
-                }else if(node.getRight().getLabel()==null) {
+                }else if(node.getRight()!=null && node.getRight().getLabel()==null) {
 
                     TreeNode temp = node.getRight();
                     while(temp.getLabel()==null){

@@ -11,7 +11,7 @@ public class ZoomableScrollPane extends ScrollPane {
     Group zoomGroup;
     Scale scaleTransform;
     Node content;
-    double scaleValue = 1.0;
+    double scaleValue = 0.6;
     double delta = 0.1;
 
     public ZoomableScrollPane(Node content) {
@@ -31,8 +31,7 @@ public class ZoomableScrollPane extends ScrollPane {
         return scaleValue;
     }
 
-    public void zoomToActual() {
-        zoomTo(1.0);
+    public void zoomToActual() {zoomTo(0.1);
     }
 
     public void zoomTo(double scaleValue) {
