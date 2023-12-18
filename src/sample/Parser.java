@@ -62,15 +62,17 @@ public class Parser {
         while (currentTokenRecord.getTokenType() == TokenType.SEMICOLON) {
             match(TokenType.SEMICOLON);
             TreeNode statement = statement();
-            statementNode = createNode(null,"no shape", statementNode, statement);
+            if (!errorFlag) {
+                statementNode = createNode(null, "no shape", statementNode, statement);
+            }
         }
 
         return statementNode;
     }
 
     private TreeNode statement() {
-
-            String value=null;
+        if(!errorFlag) {
+            String value = null;
             switch (currentTokenRecord.getTokenType()) {
                 case SEMICOLON:
                     break;
@@ -80,35 +82,36 @@ public class Parser {
                     match(TokenType.THEN);
                     TreeNode thenBranch = stmtSequence();
                     match(TokenType.END);
-                    return createNode("if", "rectangle",condition, thenBranch);
+                    return createNode("if", "rectangle", condition, thenBranch);
 
                 case REPEAT:
                     match(TokenType.REPEAT);
                     TreeNode repeatStmt = stmtSequence();
                     match(TokenType.UNTIL);
                     TreeNode untilCondition = expression();
-                    return createNode("repeat","rectangle", repeatStmt,untilCondition);
+                    return createNode("repeat", "rectangle", repeatStmt, untilCondition);
                 case IDENTIFIER:
                     value = "(" + currentTokenRecord.getTokenString() + ")";
                     match(TokenType.IDENTIFIER);
                     match(TokenType.ASSIGN);
                     TreeNode assignmentExpr = expression();
-                    return createNode("assign"+value,"rectangle", null ,assignmentExpr);
+                    return createNode("assign" + value, "rectangle", null, assignmentExpr);
                 case READ:
                     match(TokenType.READ);
                     value = "(" + currentTokenRecord.getTokenString() + ")";
                     match(TokenType.IDENTIFIER);
-                    return createNode("read"+value,"rectangle", null, null);
+                    return createNode("read" + value, "rectangle", null, null);
                 case WRITE:
                     match(TokenType.WRITE);
                     TreeNode writeExpr = expression();
-                    return createNode("write","rectangle", null, writeExpr);
+                    return createNode("write", "rectangle", null, writeExpr);
                 case THEN:
                     break;
                 default:
 
-//                    error("Unexpected token in statement: " + currentTokenRecord.getTokenType());
+                    error("Unexpected token in statement: " + currentTokenRecord.getTokenString());
             }
+        }
 
         return null;
     }
@@ -116,47 +119,51 @@ public class Parser {
 
     private TreeNode expression() {
         TreeNode simpleExpr = simpleExpression();
+        if(!errorFlag){
         if (currentTokenRecord.getTokenType() == TokenType.LESSTHAN ||
                 currentTokenRecord.getTokenType() == TokenType.EQUAL) {
             String op ="op(" +currentTokenRecord.getTokenString()+")";
             match( currentTokenRecord.getTokenType());
             TreeNode rightExpr = simpleExpression();
             return createNode(op, "oval",simpleExpr, rightExpr);
-        }
+        }}
         return simpleExpr;
     }
 
     private TreeNode simpleExpression() {
         TreeNode termExpr = term();
+        if(!errorFlag){
         while  (currentTokenRecord.getTokenType() == TokenType.PLUS ||
                 currentTokenRecord.getTokenType() == TokenType.MINUS) {
             String op = "op("+currentTokenRecord.getTokenString()+")";
             match(currentTokenRecord.getTokenType());
             TreeNode rightTerm = term();
             termExpr = createNode(op,"oval" ,termExpr, rightTerm);
-        }
+        }}
         return termExpr;
     }
 
     private TreeNode term() {
+
         TreeNode factorExpr = factor();
+        if(!errorFlag){
         while (currentTokenRecord.getTokenType() == TokenType.MULT ||
                 currentTokenRecord.getTokenType() == TokenType.DIV) {
             String op ="op(" +currentTokenRecord.getTokenString()+")";
             match(currentTokenRecord.getTokenType());
             TreeNode rightFactor = factor();
             factorExpr = createNode(op,"oval" ,factorExpr, rightFactor);
-        }
+        }}
         return factorExpr;
     }
     private TreeNode factor() {
+        if(!errorFlag) {
             if (currentTokenRecord.getTokenType() == TokenType.OPENBRACKET) {
                 match(TokenType.OPENBRACKET);
                 TreeNode expressionNode = expression();
                 match(TokenType.CLOSEDBRACKET);
                 return expressionNode;
-            }
-            else if (currentTokenRecord.getTokenType() == TokenType.NUMBER ||
+            } else if (currentTokenRecord.getTokenType() == TokenType.NUMBER ||
                     currentTokenRecord.getTokenType() == TokenType.IDENTIFIER) {
                 TreeNode leafNode;
                 if (currentTokenRecord.getTokenType() == TokenType.NUMBER) {
@@ -166,10 +173,10 @@ public class Parser {
                 }
                 match(currentTokenRecord.getTokenType());
                 return leafNode;
+            } else {
+                error("Unexpected token in factor: " + currentTokenRecord.getTokenString());
             }
-//            else {
-////                error("Unexpected token in factor: " + currentTokenRecord.getTokenType());
-//            }
+        }
 
         return null;
     }
@@ -178,7 +185,7 @@ public class Parser {
         if (currentTokenRecord.getTokenType() == expectedToken) {
             currentTokenRecord = getNextTokenRecord();
         } else {
-            error("Unexpected token: " + currentTokenRecord.getTokenType() + ". Expected: " + expectedToken);
+            error("Unexpected token: " + currentTokenRecord.getTokenString() + ", Expected: " + expectedToken);
         }
     }
 
@@ -197,19 +204,19 @@ public class Parser {
 //                "write a;\n" +
 //                "write b;\n" +
 //                "repeat\n" +
-//                "  c := a + b;\n" +
-//                "  write c\n" +
+//                "  c := a *c;\n" +
+//                "  write c;\n" +
 //                "  a := b\n" +
 //                "  b :=c\n" +
-//                "until c< n";; // Replace with your TINY code
+//                "until c< n"; // Replace with your TINY code
 //        Scanner scanner = new Scanner(tinyCode);
 //        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
 //        Parser parser = new Parser(tokenRecordsQueue);
-//        TreeNode parseTree = parser.parse();
+//        TreeNode syntaxTree = parser.parse();
 //
 //        // Print the parse tree
-//        System.out.println("Parse tree:");
-//        parseTree.printTree();
+//        System.out.println("syntaxTree tree:");
+//        syntaxTree.printTree();
 //    }
 
 
