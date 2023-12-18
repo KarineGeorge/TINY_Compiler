@@ -474,8 +474,6 @@
 //*/
 
 
-
-
 package sample;
 
 import javafx.application.Application;
@@ -496,8 +494,8 @@ import javafx.stage.FileChooser;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class Compiler extends Application {
@@ -506,7 +504,8 @@ public class Compiler extends Application {
     private Label tinyCodeLabel;
     private Label tokensLabel;
     private Button selectButton;
-    private Button runButton;
+    private Button ScannerRunButton;
+    private Button ParserRunButton;
     private Button returnButton;
 
 
@@ -543,7 +542,8 @@ public class Compiler extends Application {
         selectButton = new Button("Browse");
         tinyCodeLabel = new Label("Enter TINY code");
         codeTextArea = new TextArea();
-        runButton = new Button("run");
+        ScannerRunButton = new Button("Scanner & Parser");
+        ParserRunButton = new Button("Parser");
         fileChooser = new FileChooser();
 
 
@@ -554,13 +554,16 @@ public class Compiler extends Application {
         selectButton.setPrefWidth(90);
         tinyCodeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, FontPosture.ITALIC, 20));
         codeTextArea.setPrefHeight(500);
-        runButton.setPrefHeight(30);
-        runButton.setPrefWidth(90);
+        ScannerRunButton.setPrefHeight(30);
+        ScannerRunButton.setPrefWidth(150);
+        ParserRunButton.setPrefHeight(30);
+        ParserRunButton.setPrefWidth(150);
 
         flowPane = new FlowPane(tinyCompilerLabel);
         flowPane.setAlignment(Pos.CENTER);
-        runflowPane = new FlowPane(runButton);
+        runflowPane = new FlowPane(ScannerRunButton, ParserRunButton);
         runflowPane.setAlignment(Pos.CENTER);
+        runflowPane.setHgap(50);
 
 
         hbox = new HBox(selectCodeFileLabel, selectButton);
@@ -574,7 +577,7 @@ public class Compiler extends Application {
             selectedFile = fileChooser.showOpenDialog(stage);
         });
 
-        runButton.setOnAction(action -> {
+        ScannerRunButton.setOnAction(action -> {
 
             codeArea = codeTextArea.getText();
 
@@ -604,8 +607,47 @@ public class Compiler extends Application {
                 tinyScanner.save();
                 OutputScene(stage,tokens);
             }
-
         });
+
+        ParserRunButton.setOnAction(action -> {
+
+            codeArea = codeTextArea.getText();
+
+            if (selectedFile != null) {
+                try {
+                    codeText = Files.readString(Path.of(selectedFile.getPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (!codeArea.isBlank()) {
+                codeText = codeArea;
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Error");
+                alert.setHeaderText("Please input your code");
+                alert.showAndWait();
+            }
+
+            if (codeText != null) {
+
+                String[] tokens_arr = codeText.split("[\\n]+");
+                Queue<TokenRecord> tokenQueue = new LinkedList<>();
+                System.out.println(tokens_arr.length);
+                for (int i = 0; i < tokens_arr.length; i++) {
+                    System.out.println(tokens_arr[i]);
+                    if(!tokens_arr[i].equals("")){
+                        String[] myToken = tokens_arr[i].split(",");
+                        TokenRecord myTokenRecord = new TokenRecord(TokenType.valueOf((myToken[1].replaceAll("[^a-zA-Z0-9;:=<+->*/()]", "")).toUpperCase()),myToken[0].replaceAll("[^a-zA-Z0-9;:=<+->*/()]", ""));
+                        tokenQueue.add(myTokenRecord);
+                        System.out.println(myTokenRecord.getTokenString() + ',' + myTokenRecord.getTokenType());
+                    }
+
+                }
+                parser = new Parser(tokenQueue);
+                OutputScene(stage,codeText);
+            }
+        });
+
 
         Scene scene = new Scene(vBox, 1200, 775);
         stage.setScene(scene);
