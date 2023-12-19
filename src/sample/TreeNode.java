@@ -5,6 +5,7 @@ class TreeNode {
     private String shape;
     private TreeNode left;
     private TreeNode right;
+    private TreeNode middle;
     private int id;
     static private int staticId = 0;
 
@@ -34,6 +35,20 @@ class TreeNode {
         this.left = left;
         this.right = right;
     }
+    public TreeNode(String label, String shape, TreeNode left, TreeNode middle, TreeNode right ) {
+        id = staticId;
+        staticId++;
+        this.label = label;
+        this.shape = shape;
+        this.left = left;
+        this.right = right;
+        this.middle = middle;
+    }
+
+    // Getters and setters for elseBranch
+    public TreeNode getmiddle() {
+        return middle;
+    }
 
     public String getLabel() {
         return label;
@@ -61,15 +76,19 @@ class TreeNode {
                 System.out.print(getIndentString(indent));
                 System.out.println(node.getLabel()+" :"+node.getShape());
                 printTree(node.getLeft(), indent + 1);
+                printTree(node.getmiddle(),indent + 1);
                 printTree(node.getRight(), indent + 1);
             }
             else {
                 printTree(node.getLeft(), indent );
+                printTree(node.getmiddle(),indent );
                 printTree(node.getRight(), indent );
             }
 
         }
     }
+
+
 
     private String getIndentString(int indent) {
         StringBuilder indentString = new StringBuilder();

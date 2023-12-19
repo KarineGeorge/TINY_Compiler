@@ -39,6 +39,9 @@ public class Parser {
     private TreeNode createNode(String label, String shape ,TreeNode left, TreeNode right) {
         return new TreeNode(label,shape, left, right);
     }
+    private TreeNode createNode(String label, String shape, TreeNode left, TreeNode middle, TreeNode right ) {
+        return new TreeNode(label, shape, left, middle, right );
+    }
 
     private TreeNode createNode(String label,String shape) {
         return new TreeNode(label,shape);
@@ -81,8 +84,13 @@ public class Parser {
                     TreeNode condition = expression();
                     match(TokenType.THEN);
                     TreeNode thenBranch = stmtSequence();
+                    TreeNode elseBranch = null;
+                    if (this.currentTokenRecord.getTokenType() == TokenType.ELSE) {
+                        match(TokenType.ELSE);
+                        elseBranch = stmtSequence();
+                    }
                     match(TokenType.END);
-                    return createNode("if", "rectangle", condition, thenBranch);
+                    return createNode("if", "rectangle", condition, thenBranch, elseBranch);
 
                 case REPEAT:
                     match(TokenType.REPEAT);
@@ -105,10 +113,8 @@ public class Parser {
                     match(TokenType.WRITE);
                     TreeNode writeExpr = expression();
                     return createNode("write", "rectangle", null, writeExpr);
-                case THEN:
-                    break;
-                default:
 
+                default:
                     error("Unexpected token in statement: " + currentTokenRecord.getTokenString());
             }
         }
@@ -197,20 +203,21 @@ public class Parser {
     }
 
 //    public static void main(String[] args) {
-//        String tinyCode = "{ Fibonacci sequence }\n" +
-//                "read n;\n" +
-//                "a := 0;\n" +
-//                "b := 0;\n" +
-//                "write a;\n" +
-//                "write b;\n" +
+//        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
+//                "}\n" +
+//                "read x; {input an integer }\n" +
+//                "if 0 < x then { don’t compute if x <= 0 }\n" +
+//                "fact := 1;\n" +
 //                "repeat\n" +
-//                "  c := a *c;\n" +
-//                "  write c;\n" +
-//                "  a := b\n" +
-//                "  b :=c\n" +
-//                "until c< n"; // Replace with your TINY code
+//                "fact := fact * x;\n" +
+//                "x := x - 1\n" +
+//                "until x = 0;\n" +
+//                "write fact { output factorial of x }\n" +
+//                "else x:=1; y:=2 \n"+
+//                "end"; // Replace with your TINY code
 //        Scanner scanner = new Scanner(tinyCode);
 //        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
+//        System.out.println(scanner.print(tokenRecordsQueue));
 //        Parser parser = new Parser(tokenRecordsQueue);
 //        TreeNode syntaxTree = parser.parse();
 //

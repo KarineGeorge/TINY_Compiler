@@ -3,8 +3,6 @@ package sample;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.io.File;
 import java.util.Queue;
 import java.util.LinkedList;
 
