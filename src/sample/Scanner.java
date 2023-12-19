@@ -59,6 +59,8 @@ public class Scanner {
                 return TokenType.READ;
             case "write":
                 return TokenType.WRITE;
+            case "else":
+                return TokenType.ELSE;
             default:
                 return TokenType.IDENTIFIER; // If not a reserved word, treat it as an identifier
         }

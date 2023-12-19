@@ -22,6 +22,7 @@ public enum TokenType {
     NUMBER,
     ERROR,
     EOF,
+    ELSE,
     None
 
 }
