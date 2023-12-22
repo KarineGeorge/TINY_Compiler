@@ -542,7 +542,7 @@ public class Compiler extends Application {
         selectButton = new Button("Browse");
         tinyCodeLabel = new Label("Enter TINY code");
         codeTextArea = new TextArea();
-        ScannerRunButton = new Button("Scanner & Parser");
+        ScannerRunButton = new Button("run");
         ParserRunButton = new Button("Parser");
         fileChooser = new FileChooser();
 
@@ -561,7 +561,7 @@ public class Compiler extends Application {
 
         flowPane = new FlowPane(tinyCompilerLabel);
         flowPane.setAlignment(Pos.CENTER);
-        runflowPane = new FlowPane(ScannerRunButton, ParserRunButton);
+        runflowPane = new FlowPane(ScannerRunButton);
         runflowPane.setAlignment(Pos.CENTER);
         runflowPane.setHgap(50);
 
@@ -740,17 +740,27 @@ public class Compiler extends Application {
                 }
 
                 drawTree(node.getLeft(), node.getId(), y+100);
+
+
+                if(node.getLabel().equals("if")){
+                    xAxis+=150;
+                    drawTree(node.getmiddle(), node.getId(), y+100);
+                    xAxis+=100;
+                }
+
                 if(node.getRight()!=null && node.getLeft()!=null){
                     xAxis+=150;
                 }
+
                 drawTree(node.getRight(), node.getId(), y+100);
+
+
 
             }
             else {
                 System.out.println("null node: " + node.getId());
 
-                xAxis+=50;
-                yAxis+=25;
+                xAxis+=0;
                 drawTree(node.getLeft(), parentId, y);
                 xAxis+=150;
                 drawTree(node.getRight(), -1,y);
@@ -763,8 +773,11 @@ public class Compiler extends Application {
             if(node.getLabel() != null){
                 if(node.getLeft()!=null)
                     drawEdges(node.getLeft(), node.getId());
+                if(node.getLabel().equals("if"))
+                    drawEdges(node.getmiddle(), node.getId());
                 if(node.getRight()!=null)
                     drawEdges(node.getRight(), node.getId());
+
             }
             else {
                 if(node.getLeft()!=null && node.getLeft().getLabel()==null) {

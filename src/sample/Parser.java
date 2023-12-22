@@ -202,29 +202,29 @@ public class Parser {
         System.out.println(this.errorString);}
     }
 
-//    public static void main(String[] args) {
-//        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
-//                "}\n" +
-//                "read x; {input an integer }\n" +
-//                "if 0 < x then { don’t compute if x <= 0 }\n" +
-//                "fact := 1;\n" +
-//                "repeat\n" +
-//                "fact := fact * x;\n" +
-//                "x := x - 1\n" +
-//                "until x = 0;\n" +
-//                "write fact { output factorial of x }\n" +
-//                "else x:=1; y:=2 \n"+
-//                "end"; // Replace with your TINY code
-//        Scanner scanner = new Scanner(tinyCode);
-//        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
-//        System.out.println(scanner.print(tokenRecordsQueue));
-//        Parser parser = new Parser(tokenRecordsQueue);
-//        TreeNode syntaxTree = parser.parse();
-//
-//        // Print the parse tree
-//        System.out.println("syntaxTree tree:");
-//        syntaxTree.printTree();
-//    }
+    public static void main(String[] args) {
+        String tinyCode = "{ Sample program in TINY language – computes factorial\n" +
+                "}\n" +
+                "read x; {input an integer }\n" +
+                "if 0 < x then { don’t compute if x <= 0 }\n" +
+                "fact := 1;\n" +
+                "repeat\n" +
+                "fact := fact * x;\n" +
+                "x := x - 1\n" +
+                "until x = 0;\n" +
+                "write fact { output factorial of x}\n" +
+                "else x:=1; y:=2 \n"+
+                "end"; // Replace with your TINY code
+        Scanner scanner = new Scanner(tinyCode);
+        Queue<TokenRecord> tokenRecordsQueue = new LinkedList<>(scanner.getAllTokens());
+        System.out.println(scanner.print(tokenRecordsQueue));
+        Parser parser = new Parser(tokenRecordsQueue);
+        TreeNode syntaxTree = parser.parse();
+
+        // Print the parse tree
+        System.out.println("syntaxTree tree:");
+        syntaxTree.printTree();
+    }
 
 
 }

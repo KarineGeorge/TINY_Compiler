@@ -23,7 +23,6 @@ x                    IDENTIFIER
 x                    IDENTIFIER          
 -                    MINUS               
 1                    NUMBER              
-)                    CLOSEDBRACKET       
 until                UNTIL               
 x                    IDENTIFIER          
 =                    EQUAL               
